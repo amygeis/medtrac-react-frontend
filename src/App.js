@@ -6,10 +6,10 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import UserNav from "./components/UserNav";
 import MyMedList from "./components/MyMedList";
+import Meds from "./components/Meds";
 import Profile from "./components/Profile";
 import MyMedSchedule from "./components/MyMedSchedule";
 import SignUp from "./components/SignUp";
-import AddMed from "./components/AddMed";
 import Home from "./components/Home";
 import LogIn from "./components/LogIn";
 
@@ -25,6 +25,7 @@ function App() {
   const [userPassword, setuserPassword] = useState('');
   const [cookie, setCookie] = useState('');
   const [error, setError] = useState('');
+  const [medicines, setMedicines] =useState('')
   const history=useHistory();
 
   const signup = async(e) => {
@@ -140,9 +141,9 @@ function App() {
       }
       else{
         console.log(response)
-        setLoggedInUser(response.data.updatedUser.name)
-        setLoggedInUserName(response.data.updatedUser.username)
-        setuserPassword(response.data.updatedUser.password)
+        setLoggedInUser(response.data.name)
+        setLoggedInUserName(response.data.username)
+        setuserPassword(response.data.password)
         setToken(response.data.token);
         setError("Profile updated successfully")
       }
@@ -167,11 +168,11 @@ function App() {
         <Switch>
           <Route path="/signup" component = {()=> <SignUp 
             signup={signup} token={token} error={error} />} />
-          <Route path="/login" render = {()=> <LogIn 
+          <Route path="/login" component = {()=> <LogIn 
             login={login} token={token} error={error} /> } />
-          <Route path="/mymedschedule" render = {(routerProps)=> <MyMedSchedule {...routerProps}/>} />
-          <Route path="/mymedlist" render = {()=> <MyMedList />} />
-          <Route path="/meds" render = {() => <AddMed />} />
+          <Route path="/mymedschedule" component = {(routerProps)=> <MyMedSchedule {...routerProps}/>} />
+          <Route path="/mymedlist" component = {()=> <MyMedList />} />
+          <Route path="/meds" component = {() => <Meds medicines={medicines} setMedicines={setMedicines} />} />
           <Route path="/profile/:id" component={(routerProps) => <Profile {...routerProps} 
             userid={loggedInUserId} name={loggedInUser} username={loggedInUserName} password={userPassword}
             setName={setLoggedInUser} setUserName={setLoggedInUserName} setPassword={setuserPassword} 
