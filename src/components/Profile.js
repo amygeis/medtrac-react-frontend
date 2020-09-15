@@ -17,7 +17,7 @@ const backendURL = process.env.REACT_APP_BACKEND_URL  ||'http://localhost:3000/a
 function profile(props){
     return(
         <div className="Profile">
-            <UserNav userid={props.userid} name={props.name}/>
+            <UserNav userid={props.userid} name={props.name} logout={props.logout}/>
             <h1>Welcome to {props.name}'s Profile Page</h1>
             <form onSubmit={props.updateProfile}>
                 Name: <input onChange={(e) => props.setName(e.target.value)} type="text" value={props.name} name="name"/> <br></br>

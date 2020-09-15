@@ -40,7 +40,6 @@ function App() {
     }
     else{
       let response = await axios.post(`${backendURL}/auth/signup`, {
-        withCredentials:true,
         name: name,
         username: username,
         password: password
@@ -81,6 +80,7 @@ function App() {
       setError("Name, Username, Password cannot be blank")
     }
     else{
+      console.log("login click")
       let response = await axios.post(`${backendURL}/auth/login`, {
         username: username,
         password: password
@@ -124,11 +124,15 @@ function App() {
       setError("Name, Username, Password cannot be blank")
     }
     else{
-      let response = await axios.post(`${backendURL}/users/profile/${loggedInUserId}`, {
-        withCredentials: true,
+      console.log(token)
+      let response = await axios({method:'put',url:`${backendURL}/users/profile/${loggedInUserId}`, 
+      data:{
+        // headers: {"Authorization" : `Bearer ${token}`},
         name: name,
         username: username,
-        password: password
+        password: password},
+        headers:{authorization : `${token}`}
+      
       })
       console.log(response);
       if (response.status!==200){
@@ -144,7 +148,17 @@ function App() {
       }
     }
   }
- 
+  
+  // const logout =async()=>{
+  //   setError("")
+  //   let response = await axios.get(`${backendURL}/auth/logout)
+  //   console.log(response)
+  //   if (response.status=200) {
+
+  //   }
+
+
+  // }
 
   return (
     <div className="App">
@@ -161,7 +175,7 @@ function App() {
           <Route path="/profile/:id" component={(routerProps) => <Profile {...routerProps} 
             userid={loggedInUserId} name={loggedInUser} username={loggedInUserName} password={userPassword}
             setName={setLoggedInUser} setUserName={setLoggedInUserName} setPassword={setuserPassword} 
-            updateProfile={updateProfile} />} />
+            updateProfile={updateProfile}  />} />
           <Route path="/" component = {()=> <Home />} />
         </Switch>
       </main>
