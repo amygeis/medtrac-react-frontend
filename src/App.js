@@ -19,8 +19,10 @@ const backendURL = process.env.REACT_APP_BACKEND_URL  ||'http://localhost:3000/a
 
 function App() {
   const [token, setToken] = useState('');
+  const [loggedInUserId, setLoggedInUserId] = useState('');
   const [loggedInUser, setLoggedInUser] = useState('');
   const [loggedInUserName, setLoggedInUserName] = useState('');
+  const [userPassword, setuserPassword] = useState('');
   const [cookie, setCookie] = useState('');
   const [error, setError] = useState('');
   const history=useHistory();
@@ -32,20 +34,41 @@ function App() {
     let username = e.target.username.value;
     let password = e.target.password.value;
     console.log(name, username, password)
-    if(name=="" || username =="" || password ==""){
+    if(name==="" || username ==="" || password ===""){
       console.log("a field was left blank");
       setError("Name, Username, Password cannot be blank")
     }
     else{
       let response = await axios.post(`${backendURL}/auth/signup`, {
+        withCredentials:true,
         name: name,
         username: username,
         password: password
       })
       console.log(response);
-      setLoggedInUser(response.data.newUser.id)
-      setLoggedInUserName(response.data.newUser.username)
-      setToken(response.data.token);
+      if (response.status!==200){
+        setError("Error from server")
+      }
+      else{
+        console.log(response)
+        let id=response.data.newUser.id
+        setLoggedInUserId(id)
+        setLoggedInUser(response.data.newUsername)
+        setLoggedInUserName(response.data.newUserusername)
+        setuserPassword(response.data.newUser.password)
+        setToken(response.data.token);
+        console.log(id, loggedInUser, loggedInUserName)
+        // <Redirect to={`/profile/${id}`}/>
+        history.push({
+          pathname: `/profile/${id}`,
+          state: {userid:loggedInUserId,
+                  name: loggedInUser,
+                  error:error,
+                  username:loggedInUserName,
+                  password:userPassword,
+                  token: token}
+        })
+      }
     }
   }
 
@@ -54,7 +77,7 @@ function App() {
     setError("")
     let username = e.target.username.value;
     let password = e.target.password.value;
-    if(username =="" || password ==""){
+    if(username ==="" || password ===""){
       setError("Name, Username, Password cannot be blank")
     }
     else{
@@ -69,18 +92,55 @@ function App() {
       else{
         console.log(response)
         let id=response.data.foundUser.id
-        setLoggedInUser(response.data.foundUser.id)
+        setLoggedInUserId(id)
+        setLoggedInUser(response.data.foundUser.name)
         setLoggedInUserName(response.data.foundUser.username)
+        setuserPassword(response.data.foundUser.password)
         setToken(response.data.token);
         console.log(id, loggedInUser, loggedInUserName)
         // <Redirect to={`/profile/${id}`}/>
         history.push({
           pathname: `/profile/${id}`,
-          state: {userid:loggedInUser,
+          state: {userid:loggedInUserId,
+                  name: loggedInUser,
                   error:error,
                   username:loggedInUserName,
+                  password:userPassword,
                   token: token}
         })
+      }
+    }
+  }
+
+  const updateProfile = async(e)=>{
+    e.preventDefault();
+    setError("");
+    let name = e.target.name.value;
+    let username = e.target.username.value;
+    let password = e.target.password.value;
+    console.log(name, username, password)
+    if(name==="" || username ==="" || password ===""){
+      console.log("a field was left blank");
+      setError("Name, Username, Password cannot be blank")
+    }
+    else{
+      let response = await axios.post(`${backendURL}/users/profile/${loggedInUserId}`, {
+        withCredentials: true,
+        name: name,
+        username: username,
+        password: password
+      })
+      console.log(response);
+      if (response.status!==200){
+        setError("Error from server")
+      }
+      else{
+        console.log(response)
+        setLoggedInUser(response.data.updatedUser.name)
+        setLoggedInUserName(response.data.updatedUser.username)
+        setuserPassword(response.data.updatedUser.password)
+        setToken(response.data.token);
+        setError("Profile updated successfully")
       }
     }
   }
@@ -97,8 +157,11 @@ function App() {
             login={login} token={token} error={error} /> } />
           <Route path="/mymedschedule" render = {(routerProps)=> <MyMedSchedule {...routerProps}/>} />
           <Route path="/mymedlist" render = {()=> <MyMedList />} />
-          <Route path="/addmed" render = {() => <AddMed />} />
-          <Route path="/profie/:id" component={(routerProps) => <Profile {...routerProps} />} />
+          <Route path="/meds" render = {() => <AddMed />} />
+          <Route path="/profile/:id" component={(routerProps) => <Profile {...routerProps} 
+            userid={loggedInUserId} name={loggedInUser} username={loggedInUserName} password={userPassword}
+            setName={setLoggedInUser} setUserName={setLoggedInUserName} setPassword={setuserPassword} 
+            updateProfile={updateProfile} />} />
           <Route path="/" component = {()=> <Home />} />
         </Switch>
       </main>
