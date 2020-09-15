@@ -72,6 +72,7 @@ function App() {
         setLoggedInUser(response.data.foundUser.id)
         setLoggedInUserName(response.data.foundUser.username)
         setToken(response.data.token);
+        console.log(id, loggedInUser, loggedInUserName)
         // <Redirect to={`/profile/${id}`}/>
         history.push({
           pathname: `/profile/${id}`,
@@ -97,7 +98,7 @@ function App() {
           <Route path="/mymedschedule" render = {(routerProps)=> <MyMedSchedule {...routerProps}/>} />
           <Route path="/mymedlist" render = {()=> <MyMedList />} />
           <Route path="/addmed" render = {() => <AddMed />} />
-          <Route path="/profie/:id" render = {() => <Profile />} />
+          <Route path="/profie/:id" component={(routerProps) => <Profile {...routerProps} />} />
           <Route path="/" component = {()=> <Home />} />
         </Switch>
       </main>
