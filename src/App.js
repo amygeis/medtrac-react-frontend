@@ -25,7 +25,7 @@ function App() {
   const [userPassword, setuserPassword] = useState('');
   const [cookie, setCookie] = useState('');
   const [error, setError] = useState('');
-  const [medicines, setMedicines] =useState('')
+  const [medicines, setMedicines] =useState([])
   const history=useHistory();
 
   const signup = async(e) => {
@@ -44,7 +44,7 @@ function App() {
         name: name,
         username: username,
         password: password
-      })
+      },{withCredentials:true})
       console.log(response);
       if (response.status!==200){
         setError("Error from server")
@@ -131,10 +131,8 @@ function App() {
         // headers: {"Authorization" : `Bearer ${token}`},
         name: name,
         username: username,
-        password: password},
-        headers:{authorization : `${token}`}
-      
-      })
+        password: password}     
+      ,headers: {authorization : `${token}`}})
       console.log(response);
       if (response.status!==200){
         setError("Error from server")
@@ -172,7 +170,8 @@ function App() {
             login={login} token={token} error={error} /> } />
           <Route path="/mymedschedule" component = {(routerProps)=> <MyMedSchedule {...routerProps}/>} />
           <Route path="/mymedlist" component = {()=> <MyMedList />} />
-          <Route path="/meds" component = {() => <Meds medicines={medicines} setMedicines={setMedicines} />} />
+          <Route path="/meds" component = {() => <Meds 
+          medicines={medicines} setMedicines={setMedicines} token={token}/>} />
           <Route path="/profile/:id" component={(routerProps) => <Profile {...routerProps} 
             userid={loggedInUserId} name={loggedInUser} username={loggedInUserName} password={userPassword}
             setName={setLoggedInUser} setUserName={setLoggedInUserName} setPassword={setuserPassword} 

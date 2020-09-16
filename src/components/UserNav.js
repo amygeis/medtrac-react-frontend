@@ -16,7 +16,7 @@ const backendURL = process.env.REACT_APP_BACKEND_URL  ||'http://localhost:3000/a
 function UserNav(props){
     return(
         <div className="usernav">
-            <div><Link to ="/meds"> Medicines </Link></div>
+            <div><Link to ="/meds">All Medications </Link></div>
             <div><Link to ="/mymedschedule"> My Medication Schedule </Link></div>
             <div><Link to ="/mymedlist"> My List of Medications </Link></div>
             <div>
